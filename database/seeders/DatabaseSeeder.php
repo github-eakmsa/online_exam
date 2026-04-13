@@ -15,6 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call([
+            StudentSeeder::class,
+        ]);
+
         // AI collect the above staff user data into an array and run query iteratively to create users
         $staffUsers = [
             [
@@ -43,7 +47,7 @@ class DatabaseSeeder extends Seeder
         foreach ($staffUsers as $user) {
             $id = (string) Str::uuid();
 
-            User::create([
+            User::createOrFirst([
                 'userid' => $id,
                 'fullname' => $user['fullname'],
                 'phone' => $user['phone'],
@@ -52,7 +56,7 @@ class DatabaseSeeder extends Seeder
                 'status' => 1
             ]);
 
-            Admin::create([
+            Admin::createOrFirst([
                 'admin_id' => $id,
                 'email' => $user['email'],
                 'password' => Hash::make('password'),
@@ -60,5 +64,6 @@ class DatabaseSeeder extends Seeder
                 'login_status' => 1
             ]);
         }
+
     }
 }
