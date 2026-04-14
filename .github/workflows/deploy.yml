@@ -1,0 +1,62 @@
+name: CI-CD Deploy
+
+on:
+  push:
+    branches: [ "dev" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.2
+
+    - name: Install composer deps
+      run: composer install --no-dev --prefer-dist --optimize-autoloader
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Install node modules
+      run: npm ci
+
+    - name: Build assets
+      run: npm run build
+
+    - name: Create artifact zip
+      run: zip -r app.zip . -x ".git/*" ".github/*" "tests/*"
+
+    # add the server to known_hosts so ssh won't fail
+    - name: Add server to known_hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -p ${{ secrets.SSH_PORT || '22' }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    # Use the private key stored in Secrets
+    - name: Upload artifact via scp
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT || '22' }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "app.zip"
+        target: "~/online_exam/"
+
+    - name: Run deploy script on server
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT || '22' }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          bash ~/online_exam/deploy.sh
