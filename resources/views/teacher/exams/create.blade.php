@@ -20,7 +20,7 @@
 
         <div class="mb-2">
             <label>Subject</label>
-            <select name="subject_ID" class="form-control">
+            <select name="subject_ID" class="form-control" required>
                 @foreach(\App\Models\Subject::all() as $s)
                     <option value="{{ $s->subject_ID }}">
                         {{ $s->subject_name }}
@@ -31,7 +31,7 @@
 
         <div class="mb-2">
             <label>Class Level</label>
-            <input name="class_level" class="form-control" placeholder="e.g. Grade 10">
+            <input name="class_level" class="form-control" placeholder="e.g. 10_A" required>
         </div>
 
         <div class="mb-2">
@@ -41,7 +41,7 @@
 
         <div class="mb-3">
             <label>Instructions</label>
-            <textarea name="intro" class="form-control"></textarea>
+            <textarea name="intro" class="form-control" required></textarea>
         </div>
 
         <button class="btn btn-primary">Create Exam</button>
