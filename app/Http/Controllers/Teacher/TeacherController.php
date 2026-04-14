@@ -155,6 +155,7 @@ class TeacherController extends Controller
             ->addColumn('actions', function ($exam) {
                 return '
                     <a href="/teacher/exams/edit/'.$exam->id.'" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="/teacher/exams/'.$exam->id.'/assign" class="btn btn-sm btn-warning">Assign Questions</a>
                     <a href="/teacher/exams/delete/'.$exam->id.'" onclick="return confirm(\'Are you sure you want to delete this record?\')" class="btn btn-sm btn-danger">Delete</a>
                 ';
             })
@@ -187,7 +188,7 @@ class TeacherController extends Controller
             'status' => 1
         ]);
 
-        $eid = $quiz->eid;
+        $eid = $quiz->id;
 
         // return redirect()->route('teacher.exams')->with('success', 'Exam created');
         return redirect("/teacher/exams/{$eid}/assign")
@@ -269,7 +270,7 @@ class TeacherController extends Controller
             'total' => $count
         ]);
 
-        return redirect()->route('teacher.exams')
+        return redirect('/teacher/exams')
             ->with('success', 'Questions assigned successfully.');
     }
 

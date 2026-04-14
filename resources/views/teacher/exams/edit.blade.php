@@ -6,11 +6,11 @@
     <form method="POST" action="/teacher/exams/update/{{ $exam->id }}">
 @csrf
 
-<input name="title" value="{{ $exam->title }}" class="form-control mb-2">
+<input name="title" value="{{ $exam->title }}" class="form-control mb-2" required>
 
 <div class="mb-2">
     <label>Subject</label>
-    <select name="subject_ID" class="form-control">
+    <select name="subject_ID" class="form-control" required>
         @foreach(\App\Models\Subject::all() as $s)
             <option value="{{ $s->subject_ID }}" {{ $s->subject_ID == $exam->subject_ID ? 'selected' : '' }}>
                 {{ $s->subject_name }}
@@ -19,10 +19,10 @@
     </select>
 </div>
 
-<input name="class_level" value="{{ $exam->class_level }}" class="form-control mb-2">
-<input name="time" value="{{ $exam->time }}" class="form-control mb-2">
+<input name="class_level" value="{{ $exam->class_level }}" class="form-control mb-2" placeholder="e.g. 10_A" required>
+<input name="time" value="{{ $exam->time }}" class="form-control mb-2" required>
 
-<textarea name="intro" class="form-control mb-2">{{ $exam->intro }}</textarea>
+<textarea name="intro" class="form-control mb-2" required>{{ $exam->intro }}</textarea>
 
 <div class="mb-2">
     <label>Status</label>
