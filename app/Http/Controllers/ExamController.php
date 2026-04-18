@@ -81,9 +81,10 @@ class ExamController extends Controller
 
         ExamSession::create([
             'profileID' => $student['profileID'],
-            'exam_id' => $exam->id,
+            'exam_id' => $eid,
             'started_at' => $now,
-            'expires_at' => $expires
+            'expires_at' => $expires,
+            'status' => config('_const.exam_status_active')
         ]);
 
         // Load questions
@@ -105,9 +106,11 @@ class ExamController extends Controller
         // log every step for debugging
         Log::info("Student {$student['profileID']} submitting exam {$eid}");
 
+        $exam = Quiz::findOrFail($eid);
+
         $session = ExamSession::where('profileID', $student['profileID'])
-            ->where('exam_id', $eid)
-            ->where('status', 1)
+            ->where('exam_id', $exam->eid)
+            ->where('status', config('_const.exam_status_active'))
             ->first();
 
         Log::info("Session found: " . ($session ? 'Yes' : 'No'));
