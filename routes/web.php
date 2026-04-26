@@ -132,15 +132,11 @@ Route::middleware(['staff.auth'])->prefix('admin')->group(function () {
 Route::middleware(['staff.auth'])->prefix('admin/student-accounts')->group(function () {
 
     Route::get('/', [StudentAccountController::class,'index']);
-
+    Route::get('/data', [StudentAccountController::class,'studentsAccountData']);
     Route::get('/create/{profileID}', [StudentAccountController::class,'create']);
-
     Route::post('/store', [StudentAccountController::class,'store']);
-
     Route::get('/reset-password/{id}', [StudentAccountController::class,'resetPassword']);
-
     Route::get('/toggle-status/{id}', [StudentAccountController::class,'toggleStatus']);
-
     Route::get('/delete/{id}', [StudentAccountController::class,'delete']);
 
 });

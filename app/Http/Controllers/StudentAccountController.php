@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class StudentAccountController extends Controller
 {
@@ -17,6 +18,33 @@ class StudentAccountController extends Controller
         $accounts = LoginInformation::paginate(20);
 
         return view('admin.student_accounts.index',compact('accounts'));
+    }
+
+    public function studentsAccountData()
+    {
+        $query = LoginInformation::query()->with('student');
+
+        return DataTables::of($query)
+            ->addColumn('actions', function ($student) {
+                return '
+                    <a href="/admin/student-accounts/reset-password/'. $student->id .'"
+                    class="btn btn-warning btn-sm" onclick="return confirm(\'Are you sure to reset password?\')">
+                    Reset Password
+                    </a>
+
+                    <a href="/admin/student-accounts/toggle-status/'. $student->id .'"
+                    class="btn btn-info btn-sm" onclick="return confirm(\'Are you sure to toggle status?\')">
+                    Toggle Status
+                    </a>
+
+                    <a href="/admin/student-accounts/delete/'. $student->id .'"
+                    class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure to delete this record?\')">
+                    Delete
+                    </a>
+                ';
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
     }
 
     public function create($profileID)
