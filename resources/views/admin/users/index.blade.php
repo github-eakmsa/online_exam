@@ -11,6 +11,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Email</th>
                 <th>Phone</th>
                 <th>Role</th>
                 <th>Branch</th>
@@ -37,6 +38,7 @@ ajax: '/admin/users/data',
 columns: [
 { data: 'sn' },
 { data: 'fullname' },
+{ data: 'admin.email' },
 { data: 'phone' },
 { data: 'role' },
 { data: 'branch' },

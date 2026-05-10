@@ -15,32 +15,27 @@
 
         <div class="mb-2">
             <label>Full Name</label>
-            <input name="fullname" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-            <label>Email</label>
-            <input name="email" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-            <label>Username</label>
-            <input name="username" class="form-control" required>
-        </div>
-
-        <div class="mb-2">
-            <label>Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <input name="fullname" class="form-control" placeholder="Enter fullname" required>
         </div>
 
         <div class="mb-2">
             <label>Phone</label>
-            <input name="phone" class="form-control">
+            <input name="phone" class="form-control" placeholder="Enter phone">
+        </div>
+
+        <div class="mb-2">
+            <label>Email</label>
+            <input name="email" class="form-control" placeholder="Enter email" required>
+        </div>
+
+        <div class="mb-2">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
         </div>
 
         <div class="mb-2">
             <label>Branch</label>
-            <input name="branch" class="form-control">
+            <input name="branch" class="form-control" placeholder="Enter branch" required>
         </div>
 
         <div class="mb-3">
