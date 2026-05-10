@@ -28,9 +28,9 @@ class AdminController extends Controller
 
     public function usersData()
     {
-        $query = User::query();
+        $query = User::with('admin');
 
-        return DataTables::of($query)
+        return DataTables::eloquent($query)
             ->addColumn('actions', function ($user) {
                 return '
                     <a href="/admin/users/edit/'.$user->sn.'" class="btn btn-sm btn-warning">Edit</a>
@@ -93,11 +93,11 @@ class AdminController extends Controller
 
         if ($user->admin) {
             $user->admin->update([
-                'username' => $request->username
+                'email' => $request->email
             ]);
         }
 
-        return redirect()->route('admin.users')->with('success', 'Updated');
+        return redirect('admin/users')->with('success', 'Updated');
     }
 
     public function deleteUser($id)
