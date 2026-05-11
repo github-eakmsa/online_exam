@@ -15,5 +15,11 @@ return [
     'result_status' => [
         1 => 'show',
         0 => 'hide'
-    ]
+    ],
+
+    'record_status' => [
+        1 => 'active',
+        0 => 'inactive',
+        -1 => 'archived'
+    ],
 ];

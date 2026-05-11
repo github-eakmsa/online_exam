@@ -55,7 +55,7 @@
     {!! $question->options[$key]->option ?? '' !!}
 </textarea>
 
-@endfor
+@endforeach
 
 <label class="form-label mt-3">Correct Option</label>
 
