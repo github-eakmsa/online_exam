@@ -241,6 +241,7 @@ class TeacherController extends Controller
             ->where('grade_level',  $grade_level)
             ->inRandomOrder()
             ->limit($count)
+            ->status(1)
             ->get();
 
         Log::info('Fetched questions', ['fetched_count' => $questions->count(), 'requested_count' => $count]);

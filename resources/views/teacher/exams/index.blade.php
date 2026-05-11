@@ -27,6 +27,12 @@
 
 @section('scripts')
 <script>
+    recordStatusMap = {
+        1: 'Active',
+        0: 'Inactive',
+        '-1': 'Archived'
+    };
+
 $(document).ready(function() {
 
 $('#usersTable').DataTable({
@@ -42,8 +48,12 @@ columns: [
 { data: 'class_level' },
 { data: 'subject_ID' },
 { data: 'total' },
-{ data: 'status' },
-{ data: 'result_status' },
+{ data: 'status', render: function(data) {
+    return recordStatusMap[data] || data;
+} },
+{ data: 'result_status', render: function(data) {
+    return recordStatusMap[data] || data;
+} },
 { data: 'actions', orderable:false, searchable:false }
 ]
 
