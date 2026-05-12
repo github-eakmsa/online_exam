@@ -6,7 +6,17 @@
 
 <h3>Create Question</h3>
 
-<form method="POST" action="/teacher/questions/store">
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<form method="POST" action="/teacher/questions/store" enctype="multipart/form-data">
 @csrf
 
 <label class="form-label">Subject</label>
@@ -27,14 +37,45 @@
     @endforeach
 </select>
 
-<label class="form-label">Question</label>
+<div class="mb-3">
+
+<label>Question Type</label>
+
+<select name="question_type"
+class="form-control"
+id="questionType">
+
+<option value="text">Text Question</option>
+<option value="image">Image Question</option>
+
+</select>
+
+</div>
+
+<div id="textQuestionArea">
+
+<label>Question</label>
 
 <textarea
-    name="question"
-    class="form-control ckeditor mb-3"
-    rows="5"
-    placeholder="Question">
+name="question"
+id="question-editor"
+class="form-control ckeditor mb-3"
+rows="5"
+placeholder="Question">
 </textarea>
+
+</div>
+
+<div id="imageQuestionArea" style="display:none;">
+
+<label>Upload Question Screenshot</label>
+
+<input type="file"
+name="question_image"
+class="form-control"
+accept="image/*">
+
+</div>
 
 <label class="form-label mt-3">Options</label>
 
@@ -62,5 +103,32 @@
 </form>
 
 </div>
+
+@endsection
+
+
+@section('scripts')
+
+<script>
+
+document
+.getElementById('questionType')
+.addEventListener('change', function() {
+
+    if(this.value === 'image') {
+
+        document.getElementById('imageQuestionArea').style.display = 'block';
+        document.getElementById('textQuestionArea').style.display = 'none';
+
+    } else {
+
+        document.getElementById('imageQuestionArea').style.display = 'none';
+        document.getElementById('textQuestionArea').style.display = 'block';
+
+    }
+
+});
+
+</script>
 
 @endsection

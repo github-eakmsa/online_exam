@@ -17,7 +17,9 @@ class Question extends Model
         'choice',
         'created_by',
         'exam_type',
-        'status'
+        'status',
+        'question_type',
+        'question_image'
     ];
 
     public $timestamps = false;
