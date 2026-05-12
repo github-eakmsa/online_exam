@@ -4,8 +4,8 @@
 <div class="container">
     <h3>{{ $exam->title }}</h3>
     <p>
-        Subject: <b>{{ $exam->subject?->subject_name }}</b> | 
-        Class: <b>{{ $exam->class_level }}</b> | 
+        Subject: <b>{{ $exam->subject?->subject_name }}</b> |
+        Class: <b>{{ $exam->class_level }}</b> |
         Time: <b>{{ $exam->time }}</b> sec
     </p>
 
@@ -18,16 +18,27 @@
 
         @foreach($questions as $index => $q)
             <div class="card p-3 mb-3">
+
+                @if($q->question_type === 'image')
+
+                    <img
+                        src="{{ asset('storage/'.$q->question_image) }}"
+                        class="img-fluid rounded border mb-3">
+
+                @else
+
                 <p><strong>Q{{ $index+1 }}:</strong> {!! $q->qns !!}</p>
+
+                @endif
 
                 @foreach($q->options as $idx => $opt)
                     <div>
-                        <input type="radio" 
+                        <input type="radio"
                                 id="option-{{ $opt->optionid }}"
-                               name="answers[{{ $q->qid }}]" 
+                               name="answers[{{ $q->qid }}]"
                                value="{{ $opt->optionid }}">
                                <label for="option-{{ $opt->optionid }}">
-                                {{ chr(65 + $idx) }}. 
+                                {{ chr(65 + $idx) }}.
                                 {{ $opt->option }}
                             </label>
                     </div>
@@ -43,7 +54,7 @@
 </div>
 
 <script>
-    /** 
+    /**
      * 1. Prepare Expiry:
      * We convert "2026-03-31 20:59:29" to "2026-03-31T20:59:29Z"
      * This forces JavaScript to treat the backend time as UTC.
@@ -53,7 +64,7 @@
 
     const timer = setInterval(function() {
         // 2. Get current UTC time in milliseconds
-        const now = Date.now(); 
+        const now = Date.now();
 
         // 3. Numeric subtraction (both are now UTC timestamps)
         const distance = endTime - now;

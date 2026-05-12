@@ -16,6 +16,10 @@ use App\Models\Subject;
 use Log;
 use Yajra\DataTables\Facades\DataTables;
 
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 class TeacherController extends Controller
 {
     /* ================= QUESTIONS ================= */
@@ -50,21 +54,44 @@ class TeacherController extends Controller
     {
         $user = session('staff');
 
+        Log::info('Storing new question', ['request' => $request->all(), 'user_id' => $user]);
+
         $request->validate([
-            'question' => 'required',
+            'question' => 'required_if:question_type,text',
+            'question_image' => 'required_if:question_type,image|image|mimes:jpeg,png,jpg,gif|max:2048',
             'options' => 'required|array|min:2',
             'correct' => 'required'
         ]);
 
+        $imagePath = null;
+
+        if ($request->hasFile('question_image')) {
+
+            $imagePath = $request
+                ->file('question_image')
+                ->store('questions', 'public');
+        }
+
         $qid = Str::uuid();
+
+        if ($request->question_type == 'image') {
+            $question = "question image attached";
+            $questionImage = $imagePath;
+        }
+        else {
+            $question = $request->question;
+            $questionImage = null;
+        }
 
         Question::create([
             'qid' => $qid,
             'grade_level' => $request->grade_level,
             'subject' => $request->subject,
-            'qns' => $request->question,
+            'question_type' => $request->question_type,
+            'qns' => $question,
+            'question_image' => $questionImage,
             'choice' => count($request->options),
-            'created_by' => $user->profileID,
+            'created_by' => $user['id'],
             'exam_type' => 'mcq',
             'status' => 1
         ]);
@@ -87,7 +114,7 @@ class TeacherController extends Controller
             }
         }
 
-        return redirect()->route('teacher.questions.index')->with('success', 'Question created');
+        return redirect('teacher/questions')->with('success', 'Question created');
     }
 
     public function editQuestion($id)
@@ -98,36 +125,118 @@ class TeacherController extends Controller
 
     public function updateQuestion(Request $request, $id)
     {
-        $question = Question::where('qid', $id)->firstOrFail();
+        $request->validate([
 
-        $question->update([
-            'qns' => $request->question,
-            'subject' => $request->subject
+            'question_type' => 'required|in:text,image',
+
+            'question' => 'nullable',
+
+            'question_image' => 'required_if:question_type,image|image|mimes:jpeg,png,jpg,gif|max:2048',
+
+            'subject' => 'required',
+
+            'grade_level' => 'required',
+
+            'options' => 'required|array|min:2',
+
+            'correct' => 'required|numeric'
+
         ]);
 
-        // delete old options
-        Option::where('qid', $id)->delete();
-        Answer::where('qid', $id)->delete();
+        DB::transaction(function () use ($request, $id) {
 
-        foreach ($request->options as $index => $opt) {
+            $question = Question::where('qid', $id)->firstOrFail();
 
-            $optionId = (string) \Str::uuid();
+            $imagePath = $question->question_image;
 
-            Option::create([
-                'qid' => $id,
-                'option' => $opt,
-                'optionid' => $optionId
+            /*
+            |--------------------------------------------------------------------------
+            | Handle Image Upload
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('question_image')) {
+
+                // delete old image
+                if ($question->question_image &&
+                    Storage::disk('public')->exists($question->question_image)) {
+
+                    Storage::disk('public')->delete($question->question_image);
+                }
+
+                $imagePath = $request
+                    ->file('question_image')
+                    ->store('questions', 'public');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Question
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->question_type == 'image') {
+                $questionText = "question image attached";
+                $questionImage = $imagePath;
+            }
+            else {
+                $questionText = $request->question;
+                $questionImage = null;
+            }
+
+            $question->update([
+
+                'qns' => $questionText,
+
+                'question_type' => $request->question_type,
+
+                'question_image' => $questionImage,
+
+                'subject' => $request->subject,
+
+                'grade_level' => $request->grade_level
+
             ]);
 
-            if ($index == $request->correct) {
-                Answer::create([
-                    'qid' => $id,
-                    'ansid' => $optionId
-                ]);
-            }
-        }
+            /*
+            |--------------------------------------------------------------------------
+            | Replace Options
+            |--------------------------------------------------------------------------
+            */
 
-        return redirect()->route('teacher.questions.index')->with('success', 'Updated');
+            Option::where('qid', $id)->delete();
+
+            Answer::where('qid', $id)->delete();
+
+            foreach ($request->options as $index => $opt) {
+
+                $optionId = (string) Str::uuid();
+
+                Option::create([
+
+                    'qid' => $id,
+
+                    'option' => $opt,
+
+                    'optionid' => $optionId
+
+                ]);
+
+                if ((int)$index === (int)$request->correct) {
+
+                    Answer::create([
+
+                        'qid' => $id,
+
+                        'ansid' => $optionId
+
+                    ]);
+                }
+            }
+        });
+
+        return redirect('/teacher/questions')
+            ->with('success', 'Question updated successfully');
     }
 
     public function deleteQuestion($id)
