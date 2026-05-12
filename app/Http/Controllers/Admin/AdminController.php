@@ -125,9 +125,9 @@ class AdminController extends Controller
         return DataTables::of($query)
             ->addColumn('actions', function ($student) {
                 return '
-                    <a href="/admin/students/edit/'.$student->profile_ID.'" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="/admin/student-accounts/create/'.$student->profile_ID.'" class="btn btn-sm btn-success">Student Account</a>
-                    <a href="/admin/students/delete/'.$student->profile_ID.'" onclick="return confirm(\'Are you sure you want to delete this record?\')" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="/admin/students/edit/'.$student->student_ID.'" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="/admin/student-accounts/create/'.$student->student_ID.'" class="btn btn-sm btn-success">Student Account</a>
+                    <a href="/admin/students/delete/'.$student->student_ID.'" onclick="return confirm(\'Are you sure you want to delete this record?\')" class="btn btn-sm btn-danger">Delete</a>
                 ';
             })
             ->rawColumns(['actions'])
@@ -178,7 +178,7 @@ class AdminController extends Controller
             'temp' => $generatedPassword,
         ]);
 
-        return redirect()->route('admin.students')->with('success', 'Student created');
+        return redirect('admin/students')->with('success', 'Student created');
     }
 
     public function editStudent($id)
@@ -193,7 +193,7 @@ class AdminController extends Controller
 
         $student->update($request->all());
 
-        return redirect()->route('admin.students')->with('success', 'Updated');
+        return redirect('admin/students')->with('success', 'Updated');
     }
 
     public function deleteStudent($id)

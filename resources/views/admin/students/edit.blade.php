@@ -14,13 +14,13 @@
 
         <input name="branch" value="{{ $student->branch }}" class="form-control mb-2" placeholder="Branch">
 
-        <select name="gender" class="form-control mb-2">
-            <option value="">Gender</option>
-            <option value="Male" {{ $student->gender == 'Male' ? 'selected' : '' }}>Male</option>
-            <option value="Female" {{ $student->gender == 'Female' ? 'selected' : '' }}>Female</option>
+        <select name="col_gender" class="form-control mb-2">
+            <option value="">-Select Gender</option>
+            <option value="Male" {{ $student->col_gender == 'Male' ? 'selected' : '' }}>Male</option>
+            <option value="Female" {{ $student->col_gender == 'Female' ? 'selected' : '' }}>Female</option>
         </select>
 
-        <input name="age" type="number" value="{{ $student->age }}" class="form-control mb-2" placeholder="Age">
+        <input name="col_age" type="number" value="{{ $student->col_age }}" class="form-control mb-2" placeholder="Age">
 
         <button class="btn btn-success">Update</button>
     </form>

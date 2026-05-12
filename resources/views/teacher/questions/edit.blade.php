@@ -18,22 +18,24 @@
 <form method="POST" action="/teacher/questions/update/{{ $question->qid }}" enctype="multipart/form-data">
 @csrf
 
-<label class="form-label">Subject</label>
+<label class="form-label">Grade Level</label>
 
-<select name="subject" class="form-control mb-3">
-    @foreach(\App\Models\Subject::all() as $s)
-        <option value="{{ $s->subject_name }}" {{ $question->subject == $s->subject_name ? 'selected' : '' }}>
-            {{ $s->subject_name }}
+<select name="grade_level" class="form-control mb-3">
+    <option value="">-Select Grade Level-</option>
+    @foreach (config('_option.grade_levels') as $key => $item)
+        <option value="{{ $item }}" {{ $question->grade_level == $item ? 'selected' : '' }}>
+            {{ $item }}
         </option>
     @endforeach
 </select>
 
-<label class="form-label">Grade Level</label>
+<label class="form-label">Subject</label>
 
-<select name="grade_level" class="form-control mb-3">
-    @foreach (config('_option.grade_levels') as $key => $item)
-        <option value="{{ $item }}" {{ $question->grade_level == $item ? 'selected' : '' }}>
-            {{ $item }}
+<select name="subject" class="form-control mb-3">
+    <option value="">-Select Subject-</option>
+    @foreach(\App\Models\Subject::all() as $s)
+        <option value="{{ $s->subject_name }}" {{ $question->subject == $s->subject_name ? 'selected' : '' }}>
+            {{ $s->subject_name }}
         </option>
     @endforeach
 </select>
@@ -47,6 +49,8 @@
 name="question_type"
 class="form-control"
 id="questionType">
+
+<option value="">-Select Question Type-</option>
 
 <option
 value="text"
@@ -128,6 +132,7 @@ style="max-height:300px;">
 <label class="form-label mt-3">Correct Option</label>
 
 <select name="correct" class="form-control mb-3">
+    <option value="">-Select Correct Option-</option>
     @foreach (config('_option.option_letters') as $key => $item)
         <option value="{{ $key }}" {{ $question->correct == $key ? 'selected' : '' }}>
             {{ $item }}
@@ -137,6 +142,7 @@ style="max-height:300px;">
 
 <label>Question Status</label>
 <select name="status" class="form-control mb-3">
+    <option value="">-Select Question Status-</option>
     <option value="1" {{ $question->status == 1 ? 'selected' : '' }}>Active</option>
     <option value="0" {{ $question->status == 0 ? 'selected' : '' }}>Inactive</option>
 </select>

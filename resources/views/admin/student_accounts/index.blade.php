@@ -49,7 +49,7 @@ columns: [
 { data: 'username' },
 { data: 'temp' },
 { data: 'status', render: function(data, type, row) {
-return data ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Disabled</span>';
+return Number(data) ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Disabled</span>';
 } },
 { data: 'actions', orderable:false, searchable:false }
 ]
