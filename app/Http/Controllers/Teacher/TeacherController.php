@@ -258,9 +258,9 @@ class TeacherController extends Controller
 
     public function examsData()
     {
-        $query = Quiz::query();
+        $query = Quiz::with('subject');
 
-        return DataTables::of($query)
+        return DataTables::eloquent($query)
             ->addColumn('actions', function ($exam) {
                 return '
                     <a href="/teacher/exams/edit/'.$exam->id.'" class="btn btn-sm btn-warning">Edit</a>
@@ -348,9 +348,9 @@ class TeacherController extends Controller
         // 1. Get matching questions
         $questions = Question::where('subject', $exam->subject?->subject_name)
             ->where('grade_level',  $grade_level)
+            ->where('status', 1)
             ->inRandomOrder()
             ->limit($count)
-            ->status(1)
             ->get();
 
         Log::info('Fetched questions', ['fetched_count' => $questions->count(), 'requested_count' => $count]);

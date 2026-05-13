@@ -63,9 +63,10 @@ class ExamController extends Controller
             ->where('exam_id', $eid)
             ->where('status', config('_const.exam_status_active'))
             ->first();
-        if ($existingSession) {
-            return redirect('/student/exams')->with('error', 'You have an active session for this exam. Please complete it.');
-        }
+        // if ($existingSession) {
+        //     // return redirect('/student/exams')->with('error', 'You have an active session for this exam. Please complete it.');
+
+        // }
 
         // Prevent retake
         if (History::where('profileID', $student['profileID'])
@@ -79,13 +80,15 @@ class ExamController extends Controller
         $now = Carbon::now();
         $expires = Carbon::now()->addSeconds((int)$exam->time);
 
-        ExamSession::create([
-            'profileID' => $student['profileID'],
-            'exam_id' => $eid,
-            'started_at' => $now,
-            'expires_at' => $expires,
-            'status' => config('_const.exam_status_active')
-        ]);
+        if (!$existingSession) {
+            ExamSession::create([
+                'profileID' => $student['profileID'],
+                'exam_id' => $eid,
+                'started_at' => $now,
+                'expires_at' => $expires,
+                'status' => config('_const.exam_status_active')
+            ]);
+        }
 
         // Load questions
         $qids = ExamQuestion::where('examID', $exam->id)->pluck('quesID');

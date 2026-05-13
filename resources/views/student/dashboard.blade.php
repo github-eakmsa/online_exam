@@ -13,7 +13,6 @@
         <div class="col-md-4">
             <div class="card p-3 text-center">
                 <h5>Available Exams</h5>
-                <h3>{{ $exams }}</h3>
                 <a href="/student/exams" class="btn btn-primary btn-sm mt-2">
                     View Exams
                 </a>
@@ -23,7 +22,6 @@
         <div class="col-md-4">
             <div class="card p-3 text-center">
                 <h5>My Attempts</h5>
-                <h3>{{ $attempts }}</h3>
                 <a href="/student/results" class="btn btn-success btn-sm mt-2">
                     View Results
                 </a>
@@ -33,7 +31,7 @@
         <div class="col-md-4">
             <div class="card p-3 text-center">
                 <h5>Average Score</h5>
-                <h3>{{ number_format($average, 2) }}</h3>
+                <h3>-</h3>
             </div>
         </div>
 
