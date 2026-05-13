@@ -36,7 +36,7 @@ class StudentImportService
 
             # Generate 1 8-character unique ID for profileID, e.g. "a1b2c3d4"
             $profileID = Str::random(8);
-            $password = Str::password(8);
+            $password = Str::random(8);
 
             Student::create([
                 'profile_ID' => $profileID,
