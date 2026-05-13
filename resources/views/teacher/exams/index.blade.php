@@ -46,7 +46,7 @@ columns: [
 { data: 'id' },
 { data: 'title' },
 { data: 'class_level' },
-{ data: 'subject_ID' },
+{ data: 'subject.subject_name' },
 { data: 'total' },
 { data: 'status', render: function(data) {
     return recordStatusMap[data] || data;
