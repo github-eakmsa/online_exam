@@ -26,13 +26,23 @@ class TeacherController extends Controller
 
     public function questions()
     {
-        $questions = Question::orderBy('sn', 'desc')->get();
-        return view('teacher.questions.index', compact('questions'));
+        $classLevels = config('_option.grade_levels');
+        $subjects = Subject::orderBy('subject_name')->get();
+
+        return view('teacher.questions.index', compact('classLevels', 'subjects'));
     }
 
-    public function questionsData()
+    public function questionsData(Request $request)
     {
         $query = Question::query();
+
+        if ($request->filled('grade_level')) {
+            $query->where('grade_level', $request->grade_level);
+        }
+
+        if ($request->filled('subject')) {
+            $query->where('subject', $request->subject);
+        }
 
         return DataTables::of($query)
             ->addColumn('actions', function ($question) {
@@ -194,7 +204,8 @@ class TeacherController extends Controller
 
                 'subject' => $request->subject,
 
-                'grade_level' => $request->grade_level
+                'grade_level' => $request->grade_level,
+                'status' => $request->status
 
             ]);
 
@@ -252,13 +263,26 @@ class TeacherController extends Controller
 
     public function exams()
     {
-        $exams = Quiz::orderBy('id', 'desc')->get();
-        return view('teacher.exams.index', compact('exams'));
+        $subjects = Subject::orderBy('subject_name')->get();
+        $classLevels = Quiz::select('class_level')
+            ->distinct()
+            ->orderBy('class_level')
+            ->pluck('class_level');
+
+        return view('teacher.exams.index', compact('subjects', 'classLevels'));
     }
 
-    public function examsData()
+    public function examsData(Request $request)
     {
         $query = Quiz::with('subject');
+
+        if ($request->filled('subject_ID')) {
+            $query->where('subject_ID', $request->subject_ID);
+        }
+
+        if ($request->filled('class_level')) {
+            $query->where('class_level', $request->class_level);
+        }
 
         return DataTables::eloquent($query)
             ->addColumn('actions', function ($exam) {
