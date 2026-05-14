@@ -6,6 +6,30 @@
 
     <a href="/teacher/exams/create" class="btn btn-primary mb-3">Create Exam</a>
 
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="filterClassLevel" class="form-label">Grade Level</label>
+            <select id="filterClassLevel" class="form-control">
+                <option value="">All Levels</option>
+                @foreach($classLevels as $level)
+                    <option value="{{ $level }}">{{ $level }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="filterSubject" class="form-label">Subject</label>
+            <select id="filterSubject" class="form-control">
+                <option value="">All Subjects</option>
+                @foreach($subjects as $subject)
+                    <option value="{{ $subject->subject_ID }}">{{ $subject->subject_name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button id="resetFilters" class="btn btn-secondary ms-auto">Reset Filters</button>
+        </div>
+    </div>
+
     <table id="usersTable" class="table table-bordered">
         <thead>
             <tr>
@@ -35,29 +59,41 @@
 
 $(document).ready(function() {
 
-$('#usersTable').DataTable({
+    var table = $('#usersTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '/teacher/exams/data',
+            data: function (d) {
+                d.subject_ID = $('#filterSubject').val();
+                d.class_level = $('#filterClassLevel').val();
+            }
+        },
+        columns: [
+            { data: 'id' },
+            { data: 'title' },
+            { data: 'class_level' },
+            { data: 'subject.subject_name' },
+            { data: 'total' },
+            { data: 'status', render: function(data) {
+                return recordStatusMap[data] || data;
+            } },
+            { data: 'result_status', render: function(data) {
+                return recordStatusMap[data] || data;
+            } },
+            { data: 'actions', orderable:false, searchable:false }
+        ]
+    });
 
-processing: true,
-serverSide: true,
+    $('#filterClassLevel, #filterSubject').on('change', function() {
+        table.ajax.reload();
+    });
 
-ajax: '/teacher/exams/data',
-
-columns: [
-{ data: 'id' },
-{ data: 'title' },
-{ data: 'class_level' },
-{ data: 'subject.subject_name' },
-{ data: 'total' },
-{ data: 'status', render: function(data) {
-    return recordStatusMap[data] || data;
-} },
-{ data: 'result_status', render: function(data) {
-    return recordStatusMap[data] || data;
-} },
-{ data: 'actions', orderable:false, searchable:false }
-]
-
-});
+    $('#resetFilters').on('click', function() {
+        $('#filterClassLevel').val('');
+        $('#filterSubject').val('');
+        table.ajax.reload();
+    });
 
 });
 </script>
