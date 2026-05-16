@@ -39,7 +39,7 @@
                                value="{{ $opt->optionid }}">
                                <label for="option-{{ $opt->optionid }}">
                                 {{ chr(65 + $idx) }}.
-                                {{ $opt->option }}
+                                {!! $opt->option !!}
                             </label>
                     </div>
                 @endforeach
