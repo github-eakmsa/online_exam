@@ -141,7 +141,7 @@ class TeacherController extends Controller
 
             'question' => 'nullable',
 
-            'question_image' => 'required_if:question_type,image|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 
             'subject' => 'required',
 
@@ -156,6 +156,19 @@ class TeacherController extends Controller
         DB::transaction(function () use ($request, $id) {
 
             $question = Question::where('qid', $id)->firstOrFail();
+
+
+            $updates = [
+
+                'question_type' => $request->question_type,
+
+                'subject' => $request->subject,
+
+                'grade_level' => $request->grade_level,
+
+                'status' => $request->status
+
+            ];
 
             $imagePath = $question->question_image;
 
@@ -179,12 +192,6 @@ class TeacherController extends Controller
                     ->store('questions', 'public');
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Update Question
-            |--------------------------------------------------------------------------
-            */
-
             if ($request->question_type == 'image') {
                 $questionText = "question image attached";
                 $questionImage = $imagePath;
@@ -194,20 +201,16 @@ class TeacherController extends Controller
                 $questionImage = null;
             }
 
-            $question->update([
+            $updates['qns'] = $questionText;
+            $updates['question_image'] = $questionImage;
 
-                'qns' => $questionText,
+            /*
+            |--------------------------------------------------------------------------
+            | Update Question
+            |--------------------------------------------------------------------------
+            */
 
-                'question_type' => $request->question_type,
-
-                'question_image' => $questionImage,
-
-                'subject' => $request->subject,
-
-                'grade_level' => $request->grade_level,
-                'status' => $request->status
-
-            ]);
+            $question->update($updates);
 
             /*
             |--------------------------------------------------------------------------
