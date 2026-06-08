@@ -5,6 +5,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\Teacher\TeacherController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\StudentAccountController;
+use App\Http\Controllers\Admin\ResultController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -127,6 +128,17 @@ Route::middleware(['staff.auth'])->prefix('admin')->group(function () {
     Route::get('/branches/edit/{id}', [AdminController::class, 'editBranch']);
     Route::post('/branches/update/{id}', [AdminController::class, 'updateBranch']);
     Route::get('/branches/delete/{id}', [AdminController::class, 'deleteBranch']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESULTS
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('results')->group(function () {
+        Route::get('/exams', [ResultController::class,'examSummary']);
+        Route::get('/exam/{eid}', [ResultController::class,'examResults']);
+    });
+
 });
 
 Route::middleware(['staff.auth'])->prefix('admin/student-accounts')->group(function () {

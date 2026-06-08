@@ -69,6 +69,10 @@
                         <a class="nav-link {{ request()->is('teacher/exams*') ? 'active' : '' }}" href="/teacher/exams">Exams</a>
                     </li>
 
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/results/exams">Results</a>
+                    </li>
+
                 @endif
 
             </ul>
