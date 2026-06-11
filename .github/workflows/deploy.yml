@@ -46,10 +46,9 @@ jobs:
           && echo "SSH Port Open" \
           || echo "SSH Port Closed"
 
-    - name: Debug Connectivity
+    - name: Test SSH
       run: |
-        ping -c 4 ${{ secrets.SSH_HOST }}
-        nc -vz ${{ secrets.SSH_HOST }} 22
+        nc -vz ${{ secrets.SSH_HOST }} ${{ secrets.SSH_PORT }}
 
     # Use the private key stored in Secrets
     - name: Upload artifact via scp
