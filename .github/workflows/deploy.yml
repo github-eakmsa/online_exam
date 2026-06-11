@@ -38,7 +38,18 @@ jobs:
     - name: Add server to known_hosts
       run: |
         mkdir -p ~/.ssh
-        ssh-keyscan -p ${{ secrets.SSH_PORT || '22' }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Test SSH Port
+      run: |
+        timeout 10 bash -c "</dev/tcp/${{ secrets.SSH_HOST }}/${{ secrets.SSH_PORT }}" \
+          && echo "SSH Port Open" \
+          || echo "SSH Port Closed"
+
+    - name: Debug Connectivity
+      run: |
+        ping -c 4 ${{ secrets.SSH_HOST }}
+        nc -vz ${{ secrets.SSH_HOST }} 22
 
     # Use the private key stored in Secrets
     - name: Upload artifact via scp
@@ -46,17 +57,17 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT || '22' }}
+        port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "app.zip"
-        target: "~/online_exam/"
+        target: "/home/alafiasccom/online_exam/"
 
     - name: Run deploy script on server
       uses: appleboy/ssh-action@v1.2.0
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT || '22' }}
+        port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          bash ~/online_exam/deploy.sh
+          bash /home/alafiasccom/online_exam/deploy.sh
